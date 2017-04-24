@@ -7,191 +7,130 @@ import javax.swing.*;
  * v0.01 Just started the project to code a tic-tac-toe game.
  * v0.4 Game is currently working and notifies when someone has won.
  * v0.5 Game mechanics finished, made it so a player can not choose a spot that is already taken.
- * 
+ * v1 A lot of functionality has been changed
+ * 		- changed the way the game board is displayed
+ * 		- simplified the method where it checks if there is a winner with loops
+ * 		- Added a play again feature
+ * 		- the player now chooses their desire location by clicking on the spot
  * 
  * 
  * @Zachary Propert
- * @0.5
+ * @1
  */
 public class Game
 {
     private GUI gui;
-    private HashMap<Integer, String> board;
-    //     Random rgen = new Random();
+    private Computer comp;
+    public LinkedHashMap<Integer, String> board;
     private int turn;
 
     /**
      * Constructor for objects of class Game
      */
-    public Game(int t)
+    public Game(int t, Controller c, int playStyle)
     {
-        board = new HashMap<Integer, String> ();
+        board = new LinkedHashMap<Integer, String> ();
         turn = t;
-        gui = new GUI();
-        JOptionPane.showMessageDialog(null, "Choose a position between 1-9 and choose to enter either x or o \n");
+        gui = new GUI(c, this);
         gui.setTurn(turn);
         buildBoard();
-
-        //         for(int x=1; x<10; x++)
-        //         {
-        //             gui.drawBoard(x , board.get(x));
-        //         }
-        printBoard();
+        /* 	Not yet implemented, plan to be used when AI is added
+        if(playStyle == 0){
+        	comp = new Computer(c.getDifficulty(), this, gui);
+        }
+        */
     }
+    
 
     /**
-     * 
+     *  Creates the hashmap with a total of 9 entries each representing a spot on the tic tac toe board.
      */
     public void buildBoard()
     {
-        // put your code here
-        board.put(1," 1 ");
-        board.put(2," 2 ");
-        board.put(3," 3 ");
-        board.put(4," 4 ");
-        board.put(5," 5 ");
-        board.put(6," 6 ");
-        board.put(7," 7 ");
-        board.put(8," 8 ");
-        board.put(9," 9 ");
+    	for(int i=1;i<10;i++){
+    		board.put(i, Integer.toString(i));
+    	}
     }
-
-    public void printBoard()
-    {
-        //turn();
-        //         gui.appendText(board.get(1) + "|" + board.get(2) + "|" + board.get(3));
-        //         gui.appendText("---+---+---");
-        //         gui.appendText(board.get(4) + "|" + board.get(5) + "|" + board.get(6));
-        //         gui.appendText("---+---+---");
-        //         gui.appendText(board.get(7) + "|" + board.get(8) + "|" + board.get(9) + "\n");
-        for(int x=1; x<10; x++)
-        {
-            gui.drawBoard(x , board.get(x));
-        }
-    }
-
-    public void play(int pos, String xo)
-    {   
-        if(turn == 0) //if its x's turn
-        {
-            if(xo.matches("x") || xo.matches("X")){
-                if(xo.matches("x"))
-                    xo = xo.toUpperCase();
-
-                if(board.get(pos).matches(" X ") || board.get(pos).matches(" O "))
-                {
-                    JOptionPane.showMessageDialog(null, "\nSpot is already taken. Try again!\n");
-                    turn=0;
-                    printBoard();
-                }else{
-                    board.put(pos," " + xo + " ");
-                    turn = 1;
-                    printBoard();
-                }
-
-            }else{
-                JOptionPane.showMessageDialog(null, " \n Not a Valid character you can only enter X's \n Try again: \n");
-                turn=0;
-                printBoard();
-            }
-        }
-        else if(turn == 1) //if its o's turn
-        {
-            if(xo.matches("o") || xo.matches("O")){
-                if(xo.matches("o"))
-                    xo = xo.toUpperCase();
-
-                if(board.get(pos).matches(" O ") || board.get(pos).matches(" X "))
-                {
-                    JOptionPane.showMessageDialog(null, "\nSpot is already taken. Try again! \n");
-                    turn=1;
-                    printBoard();
-                }else{
-                    board.put(pos," " + xo + " ");
-                    turn = 0;
-                    printBoard();
-                }
-
-            }else{
-                JOptionPane.showMessageDialog(null, "\n Not a Valid character you can only enter O's \n Try again: \n");
-                turn = 1;
-                printBoard();
-            }
-        }
-        else {
-            JOptionPane.showMessageDialog(null, "ERROR!!!!");
-        }
-        gui.setTurn(turn);
-        win(xo);
-        
-    }
-
+    
+    /**
+     * Returns whose turn it is, with 0 representing X and 1 representing O
+     * @return
+     */
     public int getTurn()
     {
         return turn;
     }
 
-    public void setTurn(int turn)
-    {
-        turn = this.turn;
-    }
-
-    /** 
-     * Tests if there was a win
+    /**
+     * 
+     * @param key, the key for the hashmap
+     * @param xo the string determining if the value for the key will be either X or O.
+     * 
      */
-    public boolean win(String x)
+    public void play(int key, String xo){
+    		board.put(key, xo);
+    		if (turn == 0){
+    			turn = 1;
+    			gui.setTurn(turn);
+    		}else{
+    			turn = 0;
+    			gui.setTurn(turn);
+    		}
+    		checkWin();
+    }
+    
+    /**
+     * Checks whether a board location already has an X or O on it, if it does a pop-up 
+     * will display "Invalid location, please select another spot." and will not update the game board.
+     * Allowing a spot to only be used once each game.
+     * @param pos the JTextField from GUI that is being checked
+     * @return
+     */
+	public boolean emptySpot(JTextField pos){
+    	if(pos.getText().matches("X") || pos.getText().matches("O")){
+    		JOptionPane.showMessageDialog(null, "\nInvalid location, please select another spot.\n");
+    		return false;
+    	}else{
+    		return true;
+    	} 
+    	
+    }
+	
+	/**
+	 * Checks if anyone has won yet and returns true or false depending if there is a winner or not,
+	 * @return
+	 */
+    public boolean checkWin()
     {
-        boolean won = false;
+    	boolean won = false;
+    	
+    	for(int x=1;x<10;x=x+3){ 	//Checks if there is a winner across
+    		if(board.get(x).equals(board.get(x+1)) && board.get(x+1).equals(board.get(x+2)))
+            {
+                won = true;
+				gui.showWinner(board.get(x));
+            }
+    	}
+    	
+    	for(int y=1;y<4;y++){     	// Checks if there is a winner up and down
+    		if(board.get(y).equals(board.get(y+3)) && board.get(y+3).equals(board.get(y+6)))
+            {
+                won = true;
+				gui.showWinner(board.get(y));
+            }
+    	}
 
-        if(board.get(1).matches(" " + x + " ") && board.get(2).matches(" " + x + " ") && board.get(3).matches(" " + x + " "))
-        {
-            won = true;
-            JOptionPane.showMessageDialog(null, x.toUpperCase() + " won across the top!");
-
-        }
-        if(board.get(4).matches(" " + x + " ") && board.get(5).matches(" " + x + " ") && board.get(6).matches(" " + x + " "))
-        {
-            won = true;
-            JOptionPane.showMessageDialog(null, x.toUpperCase() + " won across the middle!");
-
-        }
-        if(board.get(7).matches(" " + x + " ") && board.get(8).matches(" " + x + " ") && board.get(9).matches(" " + x + " "))
-        {
-            won = true;
-            JOptionPane.showMessageDialog(null, x.toUpperCase() + " won across the bottom!");
-
-        }
-        if(board.get(1).matches(" " + x + " ") && board.get(4).matches(" " + x + " ") && board.get(7).matches(" " + x + " "))
-        {
-            won = true;
-            JOptionPane.showMessageDialog(null, x.toUpperCase() + " won vertically on the left!");
-
-        }
-        if(board.get(2).matches(" " + x + " ") && board.get(5).matches(" " + x + " ") && board.get(8).matches(" " + x + " "))
-        {
-            won = true;
-            JOptionPane.showMessageDialog(null, x.toUpperCase() + " won vertically in the middle!");
-
-        }
-        if(board.get(3).matches(" " + x + " ") && board.get(6).matches(" " + x + " ") && board.get(9).matches(" " + x + " "))
-        {
-            won = true;
-            JOptionPane.showMessageDialog(null, x.toUpperCase() + " won vertically on the right!");
-
-        }
-        if(board.get(1).matches(" " + x + " ") && board.get(5).matches(" " + x + " ") && board.get(9).matches(" " + x + " "))
-        {
-            won = true;
-            JOptionPane.showMessageDialog(null, x.toUpperCase() + " won diagonally!");
-
-        }
-        if(board.get(3).matches(" " + x + " ") && board.get(5).matches(" " + x + " ") && board.get(7).matches(" " + x + " "))
-        {
-            won = true;
-            JOptionPane.showMessageDialog(null, x.toUpperCase() + " won diagonally!");
-
-        }
+    	//Checks if there is a winner diagonally
+    	 if(board.get(1).equals(board.get(5)) && board.get(5).equals(board.get(9)))
+         {
+             won = true;
+             gui.showWinner(board.get(1));
+         }
+         if(board.get(3).equals(board.get(5)) && board.get(5).equals(board.get(7)))
+         {
+             won = true;
+             gui.showWinner(board.get(3));
+         }
         return won;
     }
-
 }

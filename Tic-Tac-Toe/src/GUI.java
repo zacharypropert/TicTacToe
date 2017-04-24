@@ -1,253 +1,302 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+
 import javax.swing.*;
 
 /**
  * Write a description of class GUI here.
  * 
- * @author (your name) 
+ * @author (your name)
  * @version (a version number or a date)
  */
-public class GUI
-{
-    // instance variables - replace the example below with your own
-    private JFrame frame;
-    private Container contentPane;
-    private JTextArea text;
-    private JLabel whoseTurn;
-    private JComboBox<Integer> position;
+public class GUI {
+	// instance variables - replace the example below with your own
+	private static JFrame frame;
+	private Container contentPane;
+	private JLabel whoseTurn;
+	private JButton play;
 
-    private Game game;
-    private Controller control;
-    private GridCanvas gc;
-    private Graphics g;
+	private JTextField pos1;
+	private JTextField pos2;
+	private JTextField pos3;
+	private JTextField pos4;
+	private JTextField pos5;
+	private JTextField pos6;
+	private JTextField pos7;
+	private JTextField pos8;
+	private JTextField pos9;
+	
 
-    private String turn;
-    private int spot;
+	private Game game;
+	private Controller control;
+	private String turn;
+	private ArrayList<JTextField> posList; //currently not being used
 
-    /**
-     * Constructor for objects of class GUI
-     */
-    public GUI()
-    {
-        Build();
-    }
+	/**
+	 * Constructor for objects of class GUI
+	 */
+	public GUI(Controller c, Game g) {
+		Build();
+		control = c;
+		game = g;
+		//posList = new ArrayList<JTextField>();
+	}
 
-    public void Build()
-    {
-        Font arial = new Font("Arial", Font.BOLD, 20);
+	/**
+	 * Builds the GUI
+	 */
+	public void Build() {
+		Font arial = new Font("Arial", Font.BOLD, 30);
+		Font boardFont = new Font("Arial", Font.BOLD, 175);
 
-        frame = new JFrame("Tic Tac Toe");
-        frame.setSize(300, 300);
-        frame.setResizable(false);
+		frame = new JFrame("Tic Tac Toe");
+		frame.setSize(300, 300);
+		frame.setResizable(false);
 
-        contentPane = frame.getContentPane();
-        contentPane.setLayout(new BorderLayout());
+		contentPane = frame.getContentPane();
+		contentPane.setLayout(new BorderLayout());
+		
+		JPanel Center = new JPanel();
+		Center.setLayout(new GridLayout(3,3));
 
-        JPanel north = new JPanel();
-        north.setFont(arial);
-        whoseTurn = new JLabel("");
-        whoseTurn.setFont(arial);
-        north.add(whoseTurn);
-
-        contentPane.add(north, BorderLayout.NORTH);
-
-        JPanel center = new JPanel();
-        center.setFont(arial);
-
-        /* Grid/Board */
-        JPanel grid = new JPanel();
-        grid.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.black));
-
-        gc = new GridCanvas(400, 400, 3, 3); // (width, height, floors, elevators)
-        gc.setBackground(Color.WHITE);
-        grid.add(gc);
-        grid.setSize(new Dimension(400, 400));
-        contentPane.add(grid, BorderLayout.CENTER);
-
-        /* Play button and commands at bottom */
-        JPanel controls = new JPanel();
-        controls.setLayout(new FlowLayout());
-        JButton play = new JButton("Play");
-        play.setFont(arial);
-
-        Integer[] positions = {1,2,3,4,5,6,7,8,9};
-        position = new JComboBox<Integer>(positions);
-        position.setFont(arial);
-        //spot = Integer.parseInt((String)position.getSelectedItem());
-        position.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    if (e.getStateChange() == ItemEvent.SELECTED) {
-                        int i = (Integer)e.getItemSelectable().getSelectedObjects()[0];
-                        spot = i;
-                        System.out.println(spot);
-                    }
+		pos1 = new JTextField("    ", 1);
+		pos1.setFont(boardFont);
+		pos1.setHorizontalAlignment(SwingConstants.CENTER);
+		pos1.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 2, Color.black));
+		pos1.setEditable(false);
+		pos1.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+                if(!game.checkWin() && game.emptySpot(pos1)){
+                	pos1.setText(turn);
+                	game.play(1, turn);
                 }
-            });
+             }
+        });
+		Center.add(pos1);
+		pos2 = new JTextField("   ");
+		pos2.setFont(boardFont);
+		pos2.setHorizontalAlignment(SwingConstants.CENTER);
+		pos2.setBorder(BorderFactory.createMatteBorder(0, 2, 2, 2, Color.black));
+		pos2.setEditable(false);
+		pos2.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+            	if(!game.checkWin() && game.emptySpot(pos2)){
+            		pos2.setText(turn);
+                	game.play(2, turn);
+            	}
+            }
+        });
+		Center.add(pos2);
+		pos3 = new JTextField("   ");
+		pos3.setFont(boardFont);
+		pos3.setHorizontalAlignment(SwingConstants.CENTER);
+		pos3.setBorder(BorderFactory.createMatteBorder(0, 2, 2, 0, Color.black));
+		pos3.setEditable(false);
+		pos3.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+            	 if(!game.checkWin() && game.emptySpot(pos3)){
+            		 pos3.setText(turn);
+            		 game.play(3, turn);
+            	 }
+            }
+        });
+		Center.add(pos3);
+		pos4 = new JTextField("   ");
+		pos4.setFont(boardFont);
+		pos4.setHorizontalAlignment(SwingConstants.CENTER);
+		pos4.setBorder(BorderFactory.createMatteBorder(2, 0, 2, 2, Color.black));
+		pos4.setEditable(false);
+		pos4.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+            	 if(!game.checkWin() && game.emptySpot(pos4)){
+            		 pos4.setText(turn);
+            		 game.play(4, turn);
+            	 }
+            }
+        });
+		Center.add(pos4);
+		pos5 = new JTextField("   ");
+		pos5.setFont(boardFont);
+		pos5.setHorizontalAlignment(SwingConstants.CENTER);
+		pos5.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.black));
+		pos5.setEditable(false);
+		pos5.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+            	 if(!game.checkWin() && game.emptySpot(pos5)){
+            		 pos5.setText(turn);
+            		 game.play(5, turn);
+            	 }
+            }
+        });
+		Center.add(pos5);	
+		pos6 = new JTextField("   ");
+		pos6.setFont(boardFont);
+		pos6.setHorizontalAlignment(SwingConstants.CENTER);
+		pos6.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 0, Color.black));
+		pos6.setEditable(false);
+		pos6.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+            	 if(!game.checkWin() && game.emptySpot(pos6)){
+            		 pos6.setText(turn);
+            		 game.play(6, turn);
+            	 }
+            }
+        });
+		Center.add(pos6);
+		pos7 = new JTextField("   ");
+		pos7.setFont(boardFont);
+		pos7.setHorizontalAlignment(SwingConstants.CENTER);
+		pos7.setBorder(BorderFactory.createMatteBorder(2, 0, 2, 2, Color.black));
+		pos7.setEditable(false);
+		pos7.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+            	 if(!game.checkWin() && game.emptySpot(pos7)){
+            		 pos7.setText(turn);
+            		 game.play(7, turn);
+            	 }
+            }
+        });
+		Center.add(pos7);
+		pos8 = new JTextField("   ");
+		pos8.setFont(boardFont);
+		pos8.setHorizontalAlignment(SwingConstants.CENTER);
+		pos8.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.black));
+		pos8.setEditable(false);
+		pos8.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+            	 if(!game.checkWin() && game.emptySpot(pos8)){
+            		 pos8.setText(turn);
+            		 game.play(8, turn);
+            	 }
+            }
+        });
+		Center.add(pos8);
+		pos9 = new JTextField("   ");
+		pos9.setFont(boardFont);
+		pos9.setHorizontalAlignment(SwingConstants.CENTER);
+		pos9.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 0, Color.black));
+		pos9.setEditable(false);
+		pos9.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+            	 if(!game.checkWin() && game.emptySpot(pos9)){
+            		 pos9.setText(turn);
+            		 game.play(9, turn);
+            	 }
+            }
+        });
+		Center.add(pos9);
+		/*
+		 * Not yet implemented, plans are to use this so the computer can change the tiles
+		posList.add(pos1);
+		posList.add(pos2);
+		posList.add(pos3);
+		posList.add(pos4);
+		posList.add(pos5);
+		posList.add(pos6);
+		posList.add(pos7);
+		posList.add(pos8);
+		posList.add(pos9);
+		*/
+		contentPane.add(Center, BorderLayout.CENTER);
+		JPanel north = new JPanel();
+		north.setFont(arial);
+		whoseTurn = new JLabel("");
+		whoseTurn.setFont(arial);
+		north.add(whoseTurn);
+		contentPane.add(north, BorderLayout.NORTH);
+		
+		screenCenter(frame.getSize());
+		frame.pack();
+		frame.setVisible(true);
+	}
 
-//         play.addActionListener(new ActionListener() { 
-//                 public void actionPerformed(ActionEvent e) {
-//                     control.playGame(spot,turn);
-//                 } 
-//             });
-            
-            play.addActionListener(new ActionListener() { 
-                public void actionPerformed(ActionEvent e) {
-                    System.out.println("Spot: "+spot+" turn: " +turn);
-                    playButton();
-                } 
-            });
+	/**
+	 * Resets the board, used in the showWinner method by the play again JButton.
+	 */
+	public void clearBoard(){
+		pos1.setText("   ");
+		pos2.setText("   ");
+		pos3.setText("   ");
+		pos4.setText("   ");
+		pos5.setText("   ");
+		pos6.setText("   ");
+		pos7.setText("   ");
+		pos8.setText("   ");
+		pos9.setText("   ");
+	}
+	
+	/**
+	 * Updates the top of the frame with who's turn it is
+	 * 
+	 */
+	public void setTurn(int s) {
+		if (s == 0) {
+			whoseTurn.setText("It's X's turn! \n");
+			turn = "X";
+			whoseTurn.setForeground(Color.blue);
+		} else {
+			whoseTurn.setText("It's O's turn! \n");
+			turn = "O";
+			whoseTurn.setForeground(Color.red);
+		}
+	}
+	
+	/**
+	 * Displays the winner on the top of the frame, and adds a play again button along the bottom to allow
+	 * continuous play.
+	 * 
+	 * @param s represents who the winner is, either X or O
+	 */
+	public void showWinner(String s){
+		Font winner = new Font("Arial", Font.BOLD, 40);
+		Font button = new Font("Arial", Font.BOLD, 30);
+		whoseTurn.setFont(winner);
+		whoseTurn.setForeground(Color.red);
+		whoseTurn.setText(s + " HAS WON!!");
+		
+		play = new JButton("Play Again?");
+		play.setFont(button);
+		play.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clearBoard();
+				game.buildBoard();
+				setTurn(game.getTurn());
+				game.checkWin();
+				play.setVisible(false);
+			}
+		});
+		contentPane.add(play, BorderLayout.SOUTH);
+	}
+	
+	/**
+	 * Returns the ArrayList of the pos JTextFields
+	 * currently not implemented
+	 */
+	public ArrayList<JTextField> getList(){
+		return posList;
+	}
+	
+	/**
+	 * Aligns the graphics to the center of the screen.
+	 * 
+	 */
+	public static void screenCenter(Dimension window){
+		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+		int x = (int) ((d.getWidth()-window.getWidth())/3);
+		int y = (int) ((d.getHeight()-window.getHeight())/3);
+		frame.setLocation(x,y);
+	}
 
-        controls.add(position);
-        controls.add(play);
-        contentPane.add(controls, BorderLayout.SOUTH);
+	
 
-        frame.pack();
-        frame.setVisible(true);
-    }
-
-    /**
-     * Adds text to the text area
-     */
-    public void appendText(String t)
-    {
-        text.append(t+"\n");
-    }
-
-    public int getSpot()
-    {
-        return spot;
-    }
-    
-      public void playButton()
-    {
-        control.playGame(spot,turn);
-    }
-
-    public void setTurn(int s)
-    {
-        if(s == 0){
-            whoseTurn.setText("It's X's turn! \n");
-            turn = "X";
-            whoseTurn.setForeground(Color.blue);
-        }else{
-            whoseTurn.setText("It's O's turn! \n");
-            turn = "O";
-            whoseTurn.setForeground(Color.red);
-        }
-    }
-
-    /**
-     * 
-     */
-    public void drawBoard(int pos, String s)
-    {
-        g = gc.getGraphics();
-        g.setFont(new Font("Arial", Font.BOLD, 130));
-        if(pos == 1){
-            g.setColor(Color.white);
-            g.fillRect(3, 3, 127, 127);
-            g.setColor(Color.black);
-            g.drawString(s, -20, 115);
-        }
-        if(pos == 2){
-            g.setColor(Color.white);
-            g.fillRect(136, 3, 127, 127);
-            g.setColor(Color.black);
-            g.drawString(s, 120, 115);
-        }
-        if(pos == 3){
-            g.setColor(Color.white);
-            g.fillRect(269, 3, 127, 127);
-            g.setColor(Color.black);
-            g.drawString(s, 250, 115);
-        }
-
-        if(pos == 4){
-            g.setColor(Color.white);
-            g.fillRect(3, 136, 127, 127);
-            g.setColor(Color.black);
-            g.drawString(s, -20, 250);
-        }
-        if(pos == 5){
-            g.setColor(Color.white);
-            g.fillRect(136, 136, 127, 127);
-            g.setColor(Color.black);
-            g.drawString(s, 120, 250);
-        }
-        if(pos == 6){
-            g.setColor(Color.white);
-            g.fillRect(269, 136, 127, 127);
-            g.setColor(Color.black);
-            g.drawString(s, 250, 250);
-        }
-
-        if(pos == 7){
-            g.setColor(Color.white);
-            g.fillRect(3, 269, 127, 127);
-            g.setColor(Color.black);
-            g.drawString(s, -20, 385);
-        }
-        if(pos == 8){
-            g.setColor(Color.white);
-            g.fillRect(136, 269, 127, 127);
-            g.setColor(Color.black);
-            g.drawString(s, 120, 385);
-        }
-        if(pos == 9){
-            g.setColor(Color.white);
-            g.fillRect(269, 269, 127, 127);
-            g.setColor(Color.black);
-            g.drawString(s, 250, 385);
-        }
-
-    }
-
-    /**
-     * Class used to draw the grid
-     */
-    class GridCanvas extends Canvas
-    {
-        int width, height;
-        int rows, columns;
-        int rowHt, rowWid;
-
-        /**
-         * GridCanvas constructor
-         */
-        GridCanvas(int w, int h, int r, int c)
-        {
-            width = w;
-            height = h;
-            rows = r;
-            columns = c;
-            setSize(width, height);
-        }
-
-        /**
-         * Draws the lines of the grid based on the number rows (floors) and the columns (elevators)
-         */
-        public void paint(Graphics g)
-        {
-            int i;
-            width = getSize().width;
-            height = getSize().height;
-
-            rowHt = height / rows;
-            for (i=0; i<=rows; i++)
-                g.drawRect(0, i*rowHt, width, i*rowHt);
-            rowWid = width / columns; 
-            for(i=0; i < columns; i++)
-                g.drawRect(i*rowWid, 0, i*rowWid, height);
-        }
-
-        /**
-         * Returns the rowHt to  be used in drawCar so the elevator is drawn correctly.
-         */
-        public int getScalingFactor()
-        {
-            return rowHt;
-        }
-    }
 }
