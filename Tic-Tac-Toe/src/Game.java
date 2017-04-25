@@ -76,6 +76,9 @@ public class Game
     			turn = 0;
     			gui.setTurn(turn);
     		}
+    		if(checkDraw()){
+    			gui.showDraw();
+    		}
     		checkWin();
     }
     
@@ -132,5 +135,19 @@ public class Game
              gui.showWinner(board.get(3));
          }
         return won;
+    }
+    
+    public boolean checkDraw(){
+    	boolean draw = false;
+    	int count = 0;
+    	for(int x =1; x<10; x++){
+    		if(board.get(x).matches("X") || board.get(x).matches("O")){
+    			count++;
+    		}
+    	}
+    	if(count == 9){
+    		draw = true;
+    	}
+    	return draw;
     }
 }

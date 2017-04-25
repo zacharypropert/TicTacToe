@@ -32,6 +32,7 @@ public class GUI {
 	private Controller control;
 	private String turn;
 	private ArrayList<JTextField> posList; //currently not being used
+	private Font arial;
 
 	/**
 	 * Constructor for objects of class GUI
@@ -40,6 +41,7 @@ public class GUI {
 		Build();
 		control = c;
 		game = g;
+		arial = new Font("Arial", Font.BOLD, 30);
 		//posList = new ArrayList<JTextField>();
 	}
 
@@ -47,7 +49,7 @@ public class GUI {
 	 * Builds the GUI
 	 */
 	public void Build() {
-		Font arial = new Font("Arial", Font.BOLD, 30);
+		//Font arial = new Font("Arial", Font.BOLD, 30);
 		Font boardFont = new Font("Arial", Font.BOLD, 175);
 
 		frame = new JFrame("Tic Tac Toe");
@@ -240,6 +242,7 @@ public class GUI {
 	 * 
 	 */
 	public void setTurn(int s) {
+		whoseTurn.setFont(arial);
 		if (s == 0) {
 			whoseTurn.setText("It's X's turn! \n");
 			turn = "X";
@@ -252,18 +255,31 @@ public class GUI {
 	}
 	
 	/**
-	 * Displays the winner on the top of the frame, and adds a play again button along the bottom to allow
-	 * continuous play.
+	 * Displays the winner on the top of the frame
 	 * 
 	 * @param s represents who the winner is, either X or O
 	 */
 	public void showWinner(String s){
 		Font winner = new Font("Arial", Font.BOLD, 40);
-		Font button = new Font("Arial", Font.BOLD, 30);
 		whoseTurn.setFont(winner);
 		whoseTurn.setForeground(Color.red);
 		whoseTurn.setText(s + " HAS WON!!");
-		
+		playAgain();
+	}
+	
+	public void showDraw(){
+		Font draw = new Font("Arial", Font.BOLD, 40);
+		whoseTurn.setFont(draw);
+		whoseTurn.setForeground(Color.red);
+		whoseTurn.setText("It's a DRAW");
+		playAgain();
+	}
+	
+	/**
+	 * Displays the "Play Again?" button when someone has won or there is a draw
+	 */
+	public void playAgain(){
+		Font button = new Font("Arial", Font.BOLD, 30);
 		play = new JButton("Play Again?");
 		play.setFont(button);
 		play.addActionListener(new ActionListener() {
@@ -273,6 +289,7 @@ public class GUI {
 				setTurn(game.getTurn());
 				game.checkWin();
 				play.setVisible(false);
+				whoseTurn.setFont(arial);
 			}
 		});
 		contentPane.add(play, BorderLayout.SOUTH);
